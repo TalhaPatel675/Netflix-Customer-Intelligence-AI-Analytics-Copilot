@@ -57,6 +57,16 @@ Three core ML capabilities are included:
 - **24.89% observed churn rate**
 - 30 engineered customer-level features
 
+## Key Results
+
+- **8,000 customers** analyzed across **9 relational datasets**
+- **24.89% churn rate** identified
+- **37/37 SQL validation tests** passed
+- **Logistic Regression:** 0.6414 ROC-AUC for churn prediction
+- **K-Means:** 7 customer segments identified
+- **Random Forest:** 0.998 R² for CLV prediction
+- Built an interactive **Streamlit analytics platform** with dashboards, ML predictions, segmentation, support intelligence, and an AI Analytics Copilot
+- 
 ## 🗄️ Data & Analytics
 
 The platform processes **9 relational datasets** covering:
