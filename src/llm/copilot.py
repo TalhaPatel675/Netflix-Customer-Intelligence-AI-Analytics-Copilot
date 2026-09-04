@@ -20,7 +20,15 @@ from psycopg2.extras import RealDictCursor
 from src.llm.llm_client import llm_complete, llm_available, OFFLINE
 
 ROOT = Path(__file__).resolve().parents[2]
-DB_URL = dict(host="localhost", dbname="netflix", user="postgres", password="postgres")
+import streamlit as st
+
+DB_URL = dict(
+    host=st.secrets["DB_HOST"],
+    port=st.secrets["DB_PORT"],
+    dbname=st.secrets["DB_NAME"],
+    user=st.secrets["DB_USER"],
+    password=st.secrets["DB_PASSWORD"],
+)
 
 # ---------------------------------------------------------------------------
 # Schema whitelist for the validation layer (Capability 1)
