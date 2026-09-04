@@ -139,7 +139,6 @@ PostgreSQL Database
 ├── app/
 │   ├── app.py
 │   ├── db.py
-│   └── pages/
 ├── data/
 │   ├── raw/
 │   └── processed/
