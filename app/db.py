@@ -12,7 +12,15 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 ROOT = Path(__file__).resolve().parents[1]
-DB = dict(host="localhost", dbname="netflix", user="postgres", password="postgres")
+import streamlit as st
+
+DB = dict(
+    host=st.secrets["DB_HOST"],
+    port=st.secrets["DB_PORT"],
+    dbname=st.secrets["DB_NAME"],
+    user=st.secrets["DB_USER"],
+    password=st.secrets["DB_PASSWORD"],
+)
 
 
 def query(sql: str, params=None) -> pd.DataFrame:
