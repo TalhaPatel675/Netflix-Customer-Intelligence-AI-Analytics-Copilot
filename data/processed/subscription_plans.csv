@@ -1,0 +1,4 @@
+plan_id,plan_name,monthly_price,video_quality,max_devices,advertisements
+PLAN01,Basic,6.99,720p (HD),1,Yes
+PLAN02,Standard,15.49,1080p (Full HD),2,No
+PLAN03,Premium,22.99,4K (Ultra HD),4,No

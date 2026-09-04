@@ -1,0 +1,105 @@
+{
+  "best_model": "Logistic Regression",
+  "results": {
+    "Logistic Regression": {
+      "accuracy": 0.6,
+      "precision": 0.33692722371967654,
+      "recall": 0.628140703517588,
+      "f1": 0.43859649122807015,
+      "roc_auc": 0.6413598775909497,
+      "cv_auc_mean": 0.6693654190489113,
+      "confusion_matrix": [
+        [
+          710,
+          492
+        ],
+        [
+          148,
+          250
+        ]
+      ]
+    },
+    "Random Forest": {
+      "accuracy": 0.70625,
+      "precision": 0.3686131386861314,
+      "recall": 0.2537688442211055,
+      "f1": 0.3005952380952381,
+      "roc_auc": 0.6276923302034297,
+      "cv_auc_mean": 0.6503312815347151,
+      "confusion_matrix": [
+        [
+          1029,
+          173
+        ],
+        [
+          297,
+          101
+        ]
+      ]
+    },
+    "Gradient Boosting": {
+      "accuracy": 0.745,
+      "precision": 0.4418604651162791,
+      "recall": 0.09547738693467336,
+      "f1": 0.15702479338842976,
+      "roc_auc": 0.6296457328238529,
+      "cv_auc_mean": 0.6542962845164453,
+      "confusion_matrix": [
+        [
+          1154,
+          48
+        ],
+        [
+          360,
+          38
+        ]
+      ]
+    },
+    "XGBoost": {
+      "accuracy": 0.69125,
+      "precision": 0.34615384615384615,
+      "recall": 0.271356783919598,
+      "f1": 0.30422535211267604,
+      "roc_auc": 0.5928247727823811,
+      "cv_auc_mean": 0.6154924248356661,
+      "confusion_matrix": [
+        [
+          998,
+          204
+        ],
+        [
+          290,
+          108
+        ]
+      ]
+    }
+  },
+  "feature_importance": {
+    "monthly_watch_time_trend": 0.38244165394243707,
+    "failed_payment_rate": 0.2796168845736188,
+    "avg_customer_satisfaction": 0.2629117303774313,
+    "engagement_score": 0.22008404212716876,
+    "customer_lifetime_value": 0.21355493924313673,
+    "total_watch_minutes": 0.18911695621474073,
+    "customer_tenure_days": 0.15957650571095724,
+    "distinct_titles_watched": 0.11225222943144521,
+    "current_plan_tier": 0.10293401493025389,
+    "support_ticket_count": 0.09507393621217537,
+    "avg_feedback_rating": 0.06538278693691857,
+    "customer_segment": 0.053549726683472056,
+    "avg_watch_time_per_session": 0.05237346515188001,
+    "distinct_devices": 0.04418482952675516,
+    "login_frequency": 0.037528620081787166,
+    "preferred_language": 0.035709235772710894,
+    "negative_feedback_count": 0.031632159453659436,
+    "plan_changes": 0.029687780943419544,
+    "acquisition_channel": 0.024955578877189785,
+    "avg_completion_percentage": 0.024311872989482564,
+    "failed_payment_count": 0.01962735095741501,
+    "gender": 0.019112895347707545,
+    "days_since_last_activity": 0.014129430550236051,
+    "country": 0.012238060358042837,
+    "age": 0.005861943663229641,
+    "avg_session_duration": 0.0038455175348443725
+  }
+}

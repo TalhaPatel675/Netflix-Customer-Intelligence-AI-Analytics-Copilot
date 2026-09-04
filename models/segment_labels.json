@@ -1,0 +1,31 @@
+{
+  "best_k": 7,
+  "names": {
+    "0": "Price-Sensitive New Signups",
+    "1": "High-Value Loyal",
+    "2": "Moderate Engaged",
+    "3": "At-Risk Low-Engagement",
+    "4": "Price-Sensitive New Signups",
+    "5": "Price-Sensitive New Signups",
+    "6": "Moderate Engaged"
+  },
+  "silhouette": 0.1814599239101108,
+  "elbow_inertias": [
+    40985.37301415,
+    36853.82519404067,
+    33626.61404331842,
+    30532.47577034201,
+    28009.30200910221,
+    25737.50845000007,
+    24326.506818134003
+  ],
+  "silhouette_scores": [
+    0.16108656505715438,
+    0.15914627223742073,
+    0.1661465319052329,
+    0.17226840039067964,
+    0.17513540037117997,
+    0.1814599239101108,
+    0.17104561320986872
+  ]
+}
