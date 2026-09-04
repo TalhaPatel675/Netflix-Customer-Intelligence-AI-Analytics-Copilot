@@ -66,7 +66,7 @@ Three core ML capabilities are included:
 - **K-Means:** 7 customer segments identified
 - **Random Forest:** 0.998 R² for CLV prediction
 - Built an interactive **Streamlit analytics platform** with dashboards, ML predictions, segmentation, support intelligence, and an AI Analytics Copilot
-- 
+
 ## 🗄️ Data & Analytics
 
 The platform processes **9 relational datasets** covering:
