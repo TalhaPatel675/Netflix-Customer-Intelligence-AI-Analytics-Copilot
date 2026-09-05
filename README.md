@@ -52,6 +52,14 @@ Three core ML capabilities are included:
 | Customer Segmentation | K-Means | 7 segments, silhouette **0.181** |
 | CLV Regression | Random Forest | R² **0.998** |
 
+> **A note on model honesty:** CLV is calculated as the sum of a customer's successful
+> payments, which correlates strongly with plan price and tenure — two features also
+> used to predict it. The very high R² reflects that structural relationship rather
+> than the model discovering complex hidden patterns. Churn (AUC 0.64) and
+> segmentation are the more genuinely predictive, harder problems in this project,
+> since churn was generated as a noisy, probabilistic function with no single
+> deterministic driver.
+
 ### Churn Dataset
 - **8,000 customers**
 - **24.89% observed churn rate**
