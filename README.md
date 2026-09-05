@@ -175,6 +175,12 @@ PostgreSQL Database
 ├── requirements.txt
 └── README.md
 ```
+> **Note on structure:** cleaning, feature engineering, and model training are
+> implemented as reusable scripts in `src/` rather than as sequential notebooks,
+> so the full pipeline can be run end-to-end and re-run deterministically
+> (`src/data_processing/clean.py` → `database/load_data.py` →
+> `src/features/build_features.py` → `src/models/train_models.py`). The
+> `notebooks/` folder contains a thin wrapper for exploratory use.
 
 ## ▶️ Run Locally
 
