@@ -11,3 +11,5 @@ xgboost>=2.0
 streamlit>=1.30
 plotly>=5.0
 openai>=1.0
+python-dotenv>=1.0
+sentence-transformers>=2.2

@@ -14,6 +14,8 @@ import json
 import os
 import re
 from typing import Optional
+from dotenv import load_dotenv
+load_dotenv()
 
 # ---------------------------------------------------------------------------
 # Backend 1: OpenAI-compatible (used only when a key is present)
@@ -27,9 +29,9 @@ def _openai_complete(system: str, prompt: str, max_tokens: int = 800) -> str:
     if not key:
         return ""
     try:
-        client = OpenAI(api_key=key)
+        client = OpenAI(api_key=key, base_url="https://api.groq.com/openai/v1")
         resp = client.chat.completions.create(
-            model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+            model=os.environ.get("OPENAI_MODEL", "openai/gpt-oss-20b"),
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": prompt},
@@ -142,3 +144,14 @@ def llm_complete(system: str, prompt: str, max_tokens: int = 800) -> str:
 
 def llm_available() -> bool:
     return bool(os.environ.get("OPENAI_API_KEY"))
+
+_ST_MODEL = None
+
+def embed(texts: list[str]) -> list[list[float]]:
+    """Get real semantic embeddings using a local, free sentence-transformers model."""
+    global _ST_MODEL
+    if _ST_MODEL is None:
+        from sentence_transformers import SentenceTransformer
+        _ST_MODEL = SentenceTransformer("all-MiniLM-L6-v2")
+    vecs = _ST_MODEL.encode(texts, show_progress_bar=False)
+    return vecs.tolist()

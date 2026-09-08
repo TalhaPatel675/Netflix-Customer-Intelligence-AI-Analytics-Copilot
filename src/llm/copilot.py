@@ -17,7 +17,7 @@ import pandas as pd
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-from src.llm.llm_client import llm_complete, llm_available, OFFLINE
+from src.llm.llm_client import llm_complete, llm_available, OFFLINE, embed
 
 ROOT = Path(__file__).resolve().parents[2]
 import streamlit as st
@@ -96,7 +96,7 @@ def _validate_sql(sql: str) -> tuple[bool, str]:
     """Validation layer: SELECT-only, schema whitelist, timeout+row cap, logging."""
     s = sql.strip().rstrip(";").strip()
     first = s.split(None, 1)[0].upper() if s else ""
-    if first != "SELECT":
+    if first not in ("SELECT", "WITH"):
         return False, "Blocked: only SELECT statements are permitted."
     for bad in ["INSERT", "UPDATE", "DELETE", "DROP", "ALTER", "TRUNCATE", "CREATE", "GRANT", "COPY"]:
         if re.search(rf"\b{bad}\b", s, re.IGNORECASE):
@@ -167,32 +167,34 @@ def capability1_text_to_sql(question: str) -> dict:
 class _RAGIndex:
     def __init__(self):
         self.docs: list[dict] = []
-        self.vectorizer = None
         self.matrix = None
         self._built = False
 
     def build(self):
         if self._built:
             return
-        conn = _connect()
-        try:
-            tix = pd.read_sql("SELECT ticket_id AS doc_id, customer_id, ticket_date, "
-                              "issue_category, ticket_description AS text, 'ticket' AS kind "
-                              "FROM support_tickets WHERE ticket_description IS NOT NULL", conn)
-            fb = pd.read_sql("SELECT feedback_id AS doc_id, customer_id, feedback_date, "
-                             "'feedback' AS kind, feedback_text AS text "
-                             "FROM customer_feedback WHERE feedback_text IS NOT NULL", conn)
-        finally:
-            conn.close()
-        self.docs = tix.to_dict("records") + fb.to_dict("records")
-        from sklearn.feature_extraction.text import TfidfVectorizer
-        self.vectorizer = TfidfVectorizer(stop_words="english", max_features=5000)
-        self.matrix = self.vectorizer.fit_transform([d["text"] for d in self.docs])
+        cache_path = ROOT / "data" / "processed" / "rag_cache.npz"
+        if not cache_path.exists():
+            raise RuntimeError(
+                "RAG cache not found. Run: python src/llm/build_rag_cache.py"
+            )
+        data = np.load(cache_path, allow_pickle=True)
+        self.matrix = data["matrix"]
+        self.docs = [
+            {
+                "doc_id": data["doc_id"][i],
+                "customer_id": data["customer_id"][i],
+                "kind": data["kind"][i],
+                "text": data["text"][i],
+                "issue_category": data["issue_category"][i],
+            }
+            for i in range(len(data["doc_id"]))
+        ]
         self._built = True
 
     def search(self, query: str, k: int = 8) -> list[dict]:
         self.build()
-        qv = self.vectorizer.transform([query])
+        qv = np.array(embed([query])[0], dtype=np.float32).reshape(1, -1)
         from sklearn.metrics.pairwise import cosine_similarity
         scores = cosine_similarity(qv, self.matrix).ravel()
         idx = np.argsort(scores)[::-1][:k]
@@ -289,7 +291,7 @@ def capability4_report(period: str = "monthly") -> dict:
     if llm_available():
         text = llm_complete(
             "Draft an executive report: key findings, risks, recommendations. Keep facts and interpretation separate.",
-            f"Period: {period}. Facts: {json.dumps(facts)}",
+            f"Period: {period}. Facts: {json.dumps(facts, default=float)}",
         )
     else:
         text = OFFLINE.report(facts, period)
