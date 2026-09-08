@@ -1,560 +1,259 @@
-﻿# Netflix Customer Intelligence, Churn Prediction & AI Analytics Copilot
+# Netflix Customer Intelligence, Churn Prediction & AI Analytics Copilot
 
-An end-to-end customer intelligence platform modeled on a Netflix-style subscription business. The project combines data cleaning, PostgreSQL data engineering, SQL analytics, exploratory data analysis, machine learning, and an AI-powered analytics copilot into one complete workflow.
+An end-to-end customer intelligence platform that combines **PostgreSQL analytics, machine learning, customer segmentation, churn prediction, CLV modeling, and an AI Analytics Copilot** into one interactive Streamlit application.
 
-## What's Inside
+Built to answer a practical business question:
 
-| Layer | Deliverable | Status |
-|---|---|---|
-| Data Cleaning | `src/data_processing/clean.py` — deduplication, casing, dates, outlier handling, subscription ID reconciliation | ✅ Complete |
-| Database | `database/schema.sql` + `database/load_data.py` — 9 normalized tables with PK/FK constraints and indexes | ✅ Complete |
-| SQL Analytics | `database/sql_business_questions.sql` — 37 business questions across A/B/C tiers | ✅ 37/37 tested |
-| EDA | `src/eda/eda_plots.py` — 30 visualizations across the PRD themes | ✅ Complete |
-| Feature Engineering | `src/features/build_features.py` — customer-level behavioral and subscription features | ✅ Complete |
-| Machine Learning | `src/models/train_models.py` — churn classification, customer segmentation, and CLV prediction | ✅ Complete |
-| AI Analytics Copilot | `src/llm/copilot.py` — 6 capabilities including text-to-SQL, RAG, explanations, reports, root-cause analysis, and retention recommendations | ✅ Tested |
-| Streamlit Application | `app/app.py` — 7 interactive application pages | ✅ Complete |
+> **Which customers are at risk, why are they at risk, and what can the business do about it?**
+
+## 🚀 Live Demo
+
+**[Open the live Streamlit application](https://netflix-customer-intelligence-ai-analytics-copilot.streamlit.app/)**
+
+> The demo uses a cloud PostgreSQL database and deployed application environment.
+
+## 📊 What the Platform Does
+
+### Executive Dashboard
+Provides a high-level view of customer and business performance:
+- Total customers
+- Active subscribers
+- Churn rate
+- Monthly revenue
+- Average support CSAT
+- Revenue by subscription plan
+- Monthly cancellations
+
+### Customer Analytics
+Explores customer behavior across demographics, plans, devices, acquisition channels, and content consumption.
+
+### Churn Prediction
+Predicts individual customer churn probability using machine-learning features and classifies customers into risk levels.
+
+### Customer Segmentation
+Groups customers into behavior-based segments using unsupervised learning to support targeted marketing and retention strategies.
+
+### AI Analytics Copilot
+Allows business users to ask questions in natural language and retrieve answers from the underlying database and analytics layer, with query logging for auditability.
+
+### Support Intelligence
+Uses customer support and feedback data to surface service-related insights.
+
+### Automated Reports
+Generates automated business reporting from the analytics platform.
+
+## 🧠 Machine Learning
+
+Three core ML capabilities are included:
+
+| Use Case | Best Model | Result |
+|---|---|---:|
+| Churn Classification | Logistic Regression | AUC **0.6414** |
+| Customer Segmentation | K-Means | 7 segments, silhouette **0.181** |
+| CLV Regression | Random Forest | R² **0.998** |
+
+> **A note on model honesty:** CLV is calculated as the sum of a customer's successful
+> payments, which correlates strongly with plan price and tenure — two features also
+> used to predict it. The very high R² reflects that structural relationship rather
+> than the model discovering complex hidden patterns. Churn (AUC 0.64) and
+> segmentation are the more genuinely predictive, harder problems in this project,
+> since churn was generated as a noisy, probabilistic function with no single
+> deterministic driver.
+
+### Churn Dataset
+- **8,000 customers**
+- **24.89% observed churn rate**
+- 30 engineered customer-level features
 
 ## Key Results
 
-- **8,000 customers** after data cleaning
-- **9 relational PostgreSQL tables**
-- **37/37 SQL business questions tested successfully**
-- **30 EDA visualizations**
-- **30 customer-level features**
-- **24.89% dataset churn rate**
-- **6 AI Copilot capabilities**
-- **7 Streamlit application pages**
-- Best churn model: **Logistic Regression — AUC 0.6414**
-- Best CLV model: **Random Forest — R² 0.998**
-- Customer segmentation: **7 K-Means clusters**
-
----
-
-# Quick Start — Windows
-
-## 1. Prerequisites
-
-Install the following:
-
-- Python 3.11
-- PostgreSQL 17
-- VS Code
-
-Open the project folder in VS Code and open a **PowerShell terminal** in the project root.
-
-## 2. Create the Python Virtual Environment
-
-Run:
-
-```powershell
-py -3.11 -m venv .venv
-```
-
-Activate it:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-If PowerShell blocks activation, run:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-```
-
-Then activate again:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-## 3. Install Dependencies
-
-Upgrade pip:
-
-```powershell
-python -m pip install --upgrade pip
-```
-
-Install the project dependencies:
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-## 4. Configure PostgreSQL
-
-The application expects PostgreSQL with:
-
-| Setting | Value |
-|---|---|
-| Host | `localhost` |
-| Port | `5432` |
-| Database | `netflix` |
-| Username | `postgres` |
-| Password | `postgres` |
-
-Make sure the PostgreSQL service is running.
-
-On Windows, you can check it with:
-
-```powershell
-Get-Service *postgres*
-```
-
-If PostgreSQL 17 is installed as a Windows service, it should show a status of `Running`.
-
-## 5. Create the Database
-
-If the `netflix` database does not already exist, run:
-
-```powershell
-& "C:\Program Files\PostgreSQL\17\bin\psql.exe" -U postgres -h localhost -p 5432 -d postgres -c "CREATE DATABASE netflix;"
-```
-
-If PostgreSQL asks for the password, enter:
-
-```text
-postgres
-```
-
-If you receive:
-
-```text
-ERROR: database "netflix" already exists
-```
-
-that is fine. The database has already been created.
-
-## 6. Clean the Data
-
-Run:
-
-```powershell
-python src/data_processing/clean.py
-```
-
-This creates the cleaned datasets inside:
-
-```text
-data/processed/
-```
-
-## 7. Load Data into PostgreSQL
-
-Run:
-
-```powershell
-python database/load_data.py
-```
-
-The loader creates and populates the 9 database tables from the processed datasets.
-
-## 8. Run the SQL Tests
-
-Run:
-
-```powershell
-python tests/test_sql_queries.py
-```
-
-Expected result:
-
-```text
-PASSED: 37/37
-```
-
-## 9. Build Customer Features
-
-Run:
-
-```powershell
-python src/features/build_features.py
-```
-
-This creates:
-
-```text
-data/processed/customer_features.csv
-```
-
-## 10. Train the Machine Learning Models
-
-Run:
-
-```powershell
-python src/models/train_models.py
-```
-
-The trained models are saved inside:
-
-```text
-models/
-```
-
-The pipeline includes:
-
-- Churn classification
-- Customer segmentation using K-Means
-- Customer Lifetime Value prediction
-
-## 11. Launch the Streamlit Application
-
-Run:
-
-```powershell
-python -m streamlit run app/app.py
-```
-
-Streamlit will provide a local address similar to:
-
-```text
-http://localhost:8501
-```
-
-Open that address in your browser.
-
----
-
-# Application Pages
-
-The Streamlit application contains seven main sections:
-
-### 1. Executive Dashboard
-
-Provides a high-level view of:
-
-- Total customers
-- Active customers
-- Churn rate
-- Monthly recurring revenue
-- Customer satisfaction
-- Subscription performance
-
-### 2. Customer Analytics
-
-Explores:
-
-- Customer demographics
-- Countries
+- **8,000 customers** analyzed across **9 relational datasets**
+- **24.89% churn rate** identified
+- **37/37 SQL validation tests** passed
+- **Logistic Regression:** 0.6414 ROC-AUC for churn prediction
+- **K-Means:** 7 customer segments identified
+- **Random Forest:** 0.998 R² for CLV prediction
+- Built an interactive **Streamlit analytics platform** with dashboards, ML predictions, segmentation, support intelligence, and an AI Analytics Copilot
+
+## 🗄️ Data & Analytics
+
+The platform processes **9 relational datasets** covering:
+
+- Customers
 - Subscription plans
-- Acquisition channels
-- Device usage
-- Viewing behavior
-- Popular content
+- Subscriptions
+- Content
+- Viewing activity
+- Payments
+- Support tickets
+- Customer feedback
+- Churn labels
 
-### 3. Churn Prediction
+The cleaned data is loaded into PostgreSQL and queried by the application.
 
-Uses the trained machine learning model to estimate customer churn probability.
+## 🛠️ Tech Stack
 
-The page allows customer-level analysis and provides a predicted churn risk.
+**Languages & Data**
+- Python
+- SQL
+- Pandas
+- NumPy
 
-### 4. Customer Segmentation
+**Database**
+- PostgreSQL
 
-Uses K-Means clustering to group customers according to behavioral and subscription characteristics.
-
-The resulting segments include groups such as:
-
-- High-Value Loyal
-- At-Risk Low-Engagement
-- Moderate Engaged
-- Price-Sensitive New Signups
-
-### 5. AI Analytics Copilot
-
-The analytics copilot provides six capabilities:
-
-1. Natural-language to SQL
-2. Retrieval-Augmented Generation (RAG)
-3. Churn explanations
-4. Automated reports
-5. Root-cause analysis
-6. Retention recommendations
-
-The copilot can operate using the project's deterministic offline engine, so an external API key is not required for the core application.
-
-### 6. Support Intelligence
-
-Uses customer support information to provide insights into:
-
-- Support issues
-- Customer satisfaction
-- Common problems
-- Customer-level support context
-
-### 7. Automated Reports
-
-Generates automated analytical summaries and business reports using the project's analytics and AI components.
-
----
-
-# Machine Learning
-
-## Churn Classification
-
-Four classification models are evaluated:
-
+**Machine Learning**
+- Scikit-learn
+- XGBoost
 - Logistic Regression
 - Random Forest
 - Gradient Boosting
-- XGBoost
+- K-Means
 
-The best-performing model in the current dataset is:
+**Application & Analytics**
+- Streamlit
+- Plotly
+- Jupyter Notebook
 
-**Logistic Regression**
+**Deployment**
+- Streamlit Community Cloud
+- Supabase PostgreSQL
 
-- AUC: **0.6414**
-- Precision: **0.337**
-- Recall: **0.628**
-- F1 Score: **0.439**
-
-## Customer Segmentation
-
-K-Means clustering is used to identify customer groups.
-
-Current configuration:
-
-- Number of clusters: **7**
-- Silhouette score: **0.181**
-
-## Customer Lifetime Value
-
-Three regression approaches are evaluated:
-
-- Linear Regression
-- Random Forest
-- XGBoost
-
-The current best model is:
-
-**Random Forest**
-
-- MAE: **2.29**
-- RMSE: **4.44**
-- R²: **0.998**
-
----
-
-# Project Structure
-
-```text
-customer-intelligence-platform/
-│
-├── app/
-│   ├── app.py
-│   ├── db.py
-│   └── pages/
-│
-├── data/
-│   ├── raw/
-│   └── processed/
-│
-├── database/
-│   ├── schema.sql
-│   ├── load_data.py
-│   └── sql_business_questions.sql
-│
-├── models/
-│   ├── churn_model.pkl
-│   ├── churn_metrics.json
-│   ├── segment_model.pkl
-│   ├── segment_labels.json
-│   ├── clv_model.pkl
-│   └── clv_metrics.json
-│
-├── notebooks/
-│   └── 01_eda.ipynb
-│
-├── reports/
-│   └── figures/
-│
-├── src/
-│   ├── data_processing/
-│   │   └── clean.py
-│   ├── eda/
-│   │   └── eda_plots.py
-│   ├── features/
-│   │   └── build_features.py
-│   ├── models/
-│   │   └── train_models.py
-│   └── llm/
-│       ├── copilot.py
-│       └── llm_client.py
-│
-├── tests/
-│   └── test_sql_queries.py
-│
-├── README.md
-└── requirements.txt
-```
-
----
-
-# Data Pipeline
-
-The project follows an end-to-end analytics workflow:
+## 🏗️ Project Architecture
 
 ```text
 Raw CSV Data
      ↓
-Data Cleaning
-     ↓
-Processed CSV Data
-     ↓
-PostgreSQL Database
-     ↓
-SQL Analytics
-     ↓
-EDA & Visualization
+Data Cleaning & Validation
      ↓
 Feature Engineering
      ↓
-Machine Learning
+PostgreSQL Database
      ↓
-AI Analytics Copilot
-     ↓
-Streamlit Dashboard
+ ┌───────────────┬──────────────────┬──────────────────┐
+ │ SQL Analytics │ Machine Learning │ AI Analytics     │
+ │               │                  │ Copilot          │
+ └───────────────┴──────────────────┴──────────────────┘
+                       ↓
+              Streamlit Application
+                       ↓
+        Business Dashboards & Insights
 ```
 
----
+## 📸 Application Screenshots
 
-# Database
+### Executive Dashboard
+![Executive Dashboard](screenshots/executive-dashboard.png)
 
-The PostgreSQL database contains nine relational tables:
+### Churn Prediction
+![Churn Prediction](screenshots/churn-prediction.png)
 
-1. `customers`
-2. `subscription_plans`
-3. `subscriptions`
-4. `content`
-5. `viewing_activity`
-6. `payments`
-7. `support_tickets`
-8. `customer_feedback`
-9. `churn_labels`
+### AI Analytics Copilot
+![AI Analytics Copilot](screenshots/ai-analytics-copilot.png)
 
-The database includes primary keys, foreign keys, and indexes designed to support analytical queries.
-
----
-
-# AI Analytics Copilot
-
-The AI Copilot is designed to make analytics accessible through natural language.
-
-Examples of questions include:
+## 📁 Project Structure
 
 ```text
-What is the average customer satisfaction score?
+├── app/
+│   ├── app.py
+│   ├── db.py
+├── data/
+│   ├── raw/
+│   └── processed/
+├── database/
+│   ├── schema.sql
+│   └── load_data.py
+├── models/
+├── notebooks/
+├── reports/
+├── src/
+│   ├── data_processing/
+│   ├── features/
+│   ├── models/
+│   └── llm/
+├── tests/
+├── requirements.txt
+└── README.md
+```
+> **Note on structure:** cleaning, feature engineering, and model training are
+> implemented as reusable scripts in `src/` rather than as sequential notebooks,
+> so the full pipeline can be run end-to-end and re-run deterministically
+> (`src/data_processing/clean.py` → `database/load_data.py` →
+> `src/features/build_features.py` → `src/models/train_models.py`). The
+> `notebooks/` folder contains a thin wrapper for exploratory use.
+
+## ▶️ Run Locally
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/TalhaPatel675/Netflix-Customer-Intelligence-AI-Analytics-Copilot.git
+cd Netflix-Customer-Intelligence-AI-Analytics-Copilot
 ```
 
-```text
-Which subscription plan has the highest revenue?
+### 2. Create a virtual environment
+
+```bash
+python -m venv venv
 ```
 
-```text
-What are the main drivers of customer churn?
+Activate it on Windows:
+
+```bash
+venv\Scripts\activate
 ```
 
-```text
-How can we improve retention for high-risk customers?
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
 ```
 
-The project includes an offline deterministic engine so the application can be demonstrated without requiring an external LLM API.
+### 4. Configure PostgreSQL
 
-An OpenAI-compatible API can optionally be configured using:
+Create a PostgreSQL database and configure the database credentials required by the application.
 
-```text
-OPENAI_API_KEY
+### 5. Prepare the data
+
+```bash
+python src/data_processing/clean.py
+python database/load_data.py
+python src/features/build_features.py
+python src/models/train_models.py
 ```
 
----
+### 6. Run the application
 
-# Testing
-
-The project includes automated validation for the SQL analytics layer.
-
-Run:
-
-```powershell
-python tests/test_sql_queries.py
+```bash
+streamlit run app/app.py
 ```
 
-Current result:
+## 🧪 Validation
 
-```text
-37/37 business questions passed
-```
+The project includes automated SQL validation covering the core analytics queries.
 
-The database loading pipeline also performs foreign-key orphan checks after loading the data.
+**SQL tests: 37/37 passed**
 
----
+## 💡 Business Value
 
-# Technologies Used
+This project demonstrates how raw customer data can be transformed into an end-to-end decision-support system:
 
-### Programming & Analytics
+**Data → SQL Analytics → ML Predictions → Customer Segmentation → AI-Assisted Insights → Business Action**
 
-- Python
-- Pandas
-- NumPy
-- Scikit-learn
-- XGBoost
+Potential business applications include:
+- Proactive churn prevention
+- Customer retention campaigns
+- High-value customer identification
+- Subscription and revenue analysis
+- Support quality monitoring
+- Customer lifetime value optimization
 
-### Database
-
-- PostgreSQL
-- SQL
-- Psycopg2
-- SQLAlchemy
-
-### Visualization
-
-- Matplotlib
-- Seaborn
-- Streamlit
-
-### Machine Learning
-
-- Logistic Regression
-- Random Forest
-- Gradient Boosting
-- XGBoost
-- K-Means Clustering
-- Regression models
-
-### AI
-
-- Natural-language analytics
-- Text-to-SQL
-- RAG
-- LLM integration
-- Offline deterministic analytics engine
-
----
-
-# Notes for Reviewers
-
-This project is designed to demonstrate a complete analytics engineering and machine learning workflow rather than only an isolated model.
-
-The recommended execution order is:
-
-```text
-1. Install dependencies
-2. Configure PostgreSQL
-3. Create the netflix database
-4. Run data cleaning
-5. Load data into PostgreSQL
-6. Run SQL tests
-7. Build customer features
-8. Train ML models
-9. Launch Streamlit
-```
-
-The trained model files and processed datasets are included so the application can be reviewed without having to regenerate every artifact first.
-
----
-
-# Author
+## 👨‍💻 Author
 
 **Talha Patel**
 
-Built as an end-to-end customer analytics, machine learning, and AI analytics engineering project.
+GitHub: **[TalhaPatel675](https://github.com/TalhaPatel675)**
+
+---
+
+⭐ If you find this project useful, consider giving the repository a star.
